@@ -1,47 +1,31 @@
-# Node modules
+# Root
 node_modules/
-npm-debug.log
-package-lock.json
-yarn.lock
-
-# Angular
 dist/
-.angular/
-.angular/cache/
-
-# Backend - Java/Maven
 target/
-*.jar
-*.war
-*.class
-.classpath
-.project
-.settings/
-*.log
-.vscode/
-.idea/
 
-# Environment variables
+# Environment
 .env
 .env.local
-.env.*.local
 
-# IDE
-.DS_Store
+# IDEs
+.idea/
+.vscode/
 *.swp
 *.swo
 *~
-.vscode/
-.idea/
 
 # OS
-Thumbs.db
 .DS_Store
+Thumbs.db
 
-# Build files
-build/
-dist/
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Temporary files
-*.tmp
-*.temp
+# Docker
+.docker/
+
+# Database
+*.db
