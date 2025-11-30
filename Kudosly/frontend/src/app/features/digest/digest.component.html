@@ -1,0 +1,171 @@
+<div class="digest-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Weekly Digest</h1>
+      <p class="page-subtitle">Your week in review 📊</p>
+    </div>
+  </div>
+
+  <!-- Week Navigation -->
+  <div class="week-navigation">
+    <button 
+      [disabled]="selectedWeekIndex === 0"
+      (click)="onPreviousWeek()"
+      class="nav-btn prev-btn">
+      ← Previous Week
+    </button>
+    
+    <div class="week-selector">
+      <div class="selected-week">
+        <span class="week-label">{{ weeks[selectedWeekIndex].label }}</span>
+        <span class="week-range">
+          {{ formatDate(weeks[selectedWeekIndex].weekStart) }} - {{ formatDate(weeks[selectedWeekIndex].weekEnd) }}
+        </span>
+      </div>
+    </div>
+
+    <button 
+      [disabled]="selectedWeekIndex === weeks.length - 1"
+      (click)="onNextWeek()"
+      class="nav-btn next-btn">
+      Next Week →
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your weekly digest...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <p>{{ errorMessage }}</p>
+    <button (click)="loadDigest()" class="retry-btn">Retry</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !errorMessage && weeklyDigest">
+    <!-- Summary Section -->
+    <div class="summary-section">
+      <div class="summary-card">
+        <div class="summary-icon">📝</div>
+        <div class="summary-content">
+          <h2>Week Summary</h2>
+          <p class="summary-text">{{ weeklyDigest.summary || 'Great work this week! Keep it up!' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">✨</div>
+        <div class="metric-value">{{ totalEfforts }}</div>
+        <div class="metric-label">Total Efforts</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width.%]="(totalEfforts / 20) * 100"></div>
+        </div>
+      </div>
+
+      <div class="metric-card" [class]="'metric-card-' + getMetricColor(collaborationScore)">
+        <div class="metric-icon">🤝</div>
+        <div class="metric-value">{{ collaborationScore }}%</div>
+        <div class="metric-label">Collaboration</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width.%]="collaborationScore"></div>
+        </div>
+      </div>
+
+      <div class="metric-card" [class]="'metric-card-' + getMetricColor(impactScore)">
+        <div class="metric-icon">⚡</div>
+        <div class="metric-value">{{ impactScore }}%</div>
+        <div class="metric-label">Impact Score</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width.%]="impactScore"></div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📚</div>
+        <div class="metric-value">{{ learningActivities }}</div>
+        <div class="metric-label">Learning Activities</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width.%]="(learningActivities / 12) * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contributions Section -->
+    <div class="contributions-section" *ngIf="weeklyDigest.learningWins && weeklyDigest.learningWins.length > 0">
+      <h3 class="section-title">📚 Learning Wins</h3>
+      <div class="learning-wins">
+        <div *ngFor="let win of weeklyDigest.learningWins" class="learning-card">
+          <div class="learning-icon">✓</div>
+          <p>{{ win }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collaboration Moments -->
+    <div class="collaborations-section" *ngIf="weeklyDigest.collaborationMoments && weeklyDigest.collaborationMoments.length > 0">
+      <h3 class="section-title">🤝 Collaboration Highlights</h3>
+      <div class="collaboration-list">
+        <div *ngFor="let moment of weeklyDigest.collaborationMoments" class="collaboration-item">
+          <div class="collaboration-badge">👥</div>
+          <div class="collaboration-text">{{ moment }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Recognitions -->
+    <div class="recognitions-section" *ngIf="topRecognitions && topRecognitions.length > 0">
+      <h3 class="section-title">⭐ Top Recognitions</h3>
+      <div class="recognition-cards">
+        <div *ngFor="let rec of topRecognitions" class="recognition-item">
+          <div class="recognition-header">
+            <span class="rec-badge">{{ rec.badge || '⭐' }}</span>
+            <span class="rec-score">Impact: {{ rec.impactScore }}/10</span>
+          </div>
+          <p class="rec-message">{{ rec.message }}</p>
+          <span class="rec-date">{{ rec.timestamp | date: 'MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badges Earned This Week -->
+    <div class="badges-section" *ngIf="earnedBadgesThisWeek && earnedBadgesThisWeek.length > 0">
+      <h3 class="section-title">🏅 Badges Earned</h3>
+      <div class="badges-list">
+        <div *ngFor="let badge of earnedBadgesThisWeek" class="badge-item">
+          <span class="badge-icon">{{ badge.icon || '⭐' }}</span>
+          <div class="badge-info">
+            <span class="badge-name">{{ badge.name }}</span>
+            <span class="badge-desc">{{ badge.description }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty Contributions -->
+    <div *ngIf="(!weeklyDigest.learningWins || weeklyDigest.learningWins.length === 0) && 
+                (!weeklyDigest.collaborationMoments || weeklyDigest.collaborationMoments.length === 0) &&
+                (!topRecognitions || topRecognitions.length === 0)" 
+         class="empty-contributions">
+      <div class="empty-icon">🚀</div>
+      <h3>Getting Started!</h3>
+      <p>No highlights yet for this week. Keep working toward your goals!</p>
+    </div>
+  </div>
+
+  <!-- Export/Share Section -->
+  <div *ngIf="!isLoading && !errorMessage && weeklyDigest" class="digest-actions">
+    <button class="action-btn export-btn">
+      📥 Export Digest
+    </button>
+    <button class="action-btn share-btn">
+      📤 Share with Manager
+    </button>
+  </div>
+</div>

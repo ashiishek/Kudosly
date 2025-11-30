@@ -1,0 +1,133 @@
+<div class="recognitions-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Recognition Feed</h1>
+      <p class="header-subtitle">Celebrating every achievement 🎉</p>
+    </div>
+  </div>
+
+  <!-- Filter & Sort Section -->
+  <div class="controls-section">
+    <div class="filter-section">
+      <label class="control-label">Filter by:</label>
+      <div class="filter-buttons">
+        <button 
+          *ngFor="let filter of filters"
+          (click)="onFilterChange(filter.id)"
+          [class.active]="selectedFilter === filter.id"
+          class="filter-btn">
+          {{ filter.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sort-section">
+      <label class="control-label">Sort by:</label>
+      <select [(ngModel)]="selectedSort" (change)="onSortChange(selectedSort)" class="sort-select">
+        <option *ngFor="let option of sortOptions" [value]="option.id">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Loading recognitions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && errorMessage" class="error-state">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Recognitions List -->
+  <div *ngIf="!isLoading && filteredRecognitions.length > 0" class="recognitions-list">
+    <div 
+      *ngFor="let recognition of filteredRecognitions; let i = index"
+      (click)="openDetail(recognition)"
+      class="recognition-card">
+      
+      <div class="card-top">
+        <span class="badge-icon">{{ recognition.badge }}</span>
+        <div class="impact-badge">+{{ recognition.impactScore }} pts</div>
+      </div>
+
+      <div class="card-content">
+        <p class="recognition-message">{{ recognition.message }}</p>
+        <div class="card-footer">
+          <small class="recognition-date">{{ recognition.timestamp | date: 'MMM dd, yyyy' }}</small>
+          <span class="read-more">View Details →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredRecognitions.length === 0" class="empty-state">
+    <p class="empty-icon">🌟</p>
+    <p class="empty-text">No recognitions found for this filter.</p>
+    <p class="empty-subtext">Keep sharing great work to earn more recognitions!</p>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && filteredRecognitions.length > 0" class="pagination-section">
+    <button 
+      (click)="onPreviousPage()" 
+      [disabled]="!hasPreviousPage"
+      class="pagination-btn">
+      ← Previous
+    </button>
+
+    <div class="pagination-info">
+      Page {{ currentPage + 1 }} of {{ totalPages }}
+      <span class="record-count">({{ currentPageStart }}-{{ currentPageEnd }} of {{ totalRecognitions }})</span>
+    </div>
+
+    <button 
+      (click)="onNextPage()" 
+      [disabled]="!hasNextPage"
+      class="pagination-btn">
+      Next →
+    </button>
+  </div>
+
+  <!-- Detail Modal -->
+  <div *ngIf="showDetailModal && selectedRecognition" class="modal-overlay" (click)="closeDetail()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeDetail()">✕</button>
+      
+      <div class="modal-header">
+        <span class="modal-badge">{{ selectedRecognition.badge }}</span>
+        <h2>Recognition Details</h2>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-row">
+          <label>Message</label>
+          <p class="detail-value">{{ selectedRecognition.message }}</p>
+        </div>
+
+        <div class="detail-row">
+          <label>Impact Score</label>
+          <p class="detail-value">{{ selectedRecognition.impactScore }} points</p>
+        </div>
+
+        <div class="detail-row">
+          <label>Date</label>
+          <p class="detail-value">{{ selectedRecognition.timestamp | date: 'full' }}</p>
+        </div>
+
+        <div class="detail-row">
+          <label>Effort ID</label>
+          <p class="detail-value">{{ selectedRecognition.effortId }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn" (click)="closeDetail()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

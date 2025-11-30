@@ -1,0 +1,24 @@
+{
+  "name": "kudosly",
+  "version": "1.0.0",
+  "description": "AI-Powered Employee Recognition Platform",
+  "main": "index.js",
+  "scripts": {
+    "setup": "bash setup.sh",
+    "start": "docker-compose up",
+    "start:dev": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "logs": "docker-compose logs -f",
+    "build": "docker-compose build",
+    "clean": "docker-compose down -v"
+  },
+  "keywords": [
+    "employee-recognition",
+    "ai",
+    "kudos",
+    "appreciation"
+  ],
+  "author": "Kudosly Team",
+  "license": "UNLICENSED",
+  "private": true
+}

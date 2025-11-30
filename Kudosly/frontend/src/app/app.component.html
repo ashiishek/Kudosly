@@ -1,0 +1,63 @@
+<div class="app-layout">
+  <!-- Top Navigation Header -->
+  <header class="top-navbar">
+    <div class="navbar-content">
+      <div class="navbar-left">
+        <div class="app-logo">
+          <span class="logo-icon">🎯</span>
+          <h1 class="logo-text">{{ title }}</h1>
+        </div>
+      </div>
+      
+      <nav class="navbar-nav">
+        <a 
+          routerLink="/dashboard" 
+          routerLinkActive="active"
+          class="nav-item">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a 
+          routerLink="/recognitions" 
+          routerLinkActive="active"
+          class="nav-item">
+          <span class="nav-icon">⭐</span>
+          <span class="nav-label">Recognition</span>
+        </a>
+        <a 
+          routerLink="/badges" 
+          routerLinkActive="active"
+          class="nav-item">
+          <span class="nav-icon">🏅</span>
+          <span class="nav-label">Badges</span>
+        </a>
+        <a 
+          routerLink="/digest" 
+          routerLinkActive="active"
+          class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Weekly Digest</span>
+        </a>
+      </nav>
+      
+      <div class="navbar-right">
+        <div *ngIf="isAuthenticated && currentUser" class="user-info">
+          <span class="user-name">{{ currentUser.name }}</span>
+          <button class="btn-logout" (click)="logout()" aria-label="Logout">
+            Logout
+          </button>
+        </div>
+        <button *ngIf="!isAuthenticated" class="icon-button" aria-label="Menu">
+          <span class="menu-icon">☰</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

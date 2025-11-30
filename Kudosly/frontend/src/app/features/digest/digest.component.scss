@@ -1,0 +1,705 @@
+/* Digest Component - Professional Weekly Summary */
+
+.digest-container {
+  padding: 40px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+/* ======================== HEADER SECTION ======================== */
+
+.page-header {
+  margin-bottom: 48px;
+
+  h1 {
+    font-size: 40px;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+/* ======================== WEEK NAVIGATION ======================== */
+
+.week-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .nav-btn {
+    padding: 10px 20px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #6b7280;
+
+    &:hover:not(:disabled) {
+      border-color: #3b82f6;
+      color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .week-selector {
+    flex: 1;
+    text-align: center;
+
+    .selected-week {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+
+      .week-label {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .week-range {
+        font-size: 13px;
+        color: #6b7280;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* ======================== LOADING STATE ======================== */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 32px;
+  gap: 20px;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ======================== ERROR STATE ======================== */
+
+.error-state {
+  background: #fee2e2;
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 32px;
+
+  p {
+    color: #dc2626;
+    font-size: 15px;
+    margin: 0 0 16px 0;
+    font-weight: 500;
+  }
+
+  .retry-btn {
+    padding: 10px 24px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: #b91c1c;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+  }
+}
+
+/* ======================== SUMMARY SECTION ======================== */
+
+.summary-section {
+  margin-bottom: 40px;
+
+  .summary-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 2px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+
+    .summary-icon {
+      font-size: 48px;
+      flex-shrink: 0;
+    }
+
+    .summary-content {
+      flex: 1;
+
+      h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 12px 0;
+      }
+
+      .summary-text {
+        font-size: 16px;
+        color: #4b5563;
+        line-height: 1.6;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* ======================== METRICS GRID ======================== */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+
+  .metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e5e7eb;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+      transform: translateY(-4px);
+    }
+
+    .metric-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .metric-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+
+      .metric-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 4px;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+
+    // Color variations for different scores
+    &.metric-card-excellent .metric-bar-fill {
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    }
+
+    &.metric-card-good .metric-bar-fill {
+      background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    &.metric-card-fair .metric-bar-fill {
+      background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    &.metric-card-needs-improvement .metric-bar-fill {
+      background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    }
+  }
+}
+
+/* ======================== SECTION TITLE ======================== */
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* ======================== LEARNING WINS ======================== */
+
+.contributions-section,
+.collaborations-section,
+.recognitions-section,
+.badges-section {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+}
+
+.learning-wins {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+
+  .learning-card {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border: 2px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+
+    .learning-icon {
+      width: 24px;
+      height: 24px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    p {
+      font-size: 14px;
+      color: #065f46;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+/* ======================== COLLABORATION HIGHLIGHTS ======================== */
+
+.collaboration-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .collaboration-item {
+    background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%);
+    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    .collaboration-badge {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .collaboration-text {
+      font-size: 15px;
+      color: #1e40af;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+}
+
+/* ======================== RECOGNITION CARDS ======================== */
+
+.recognition-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+
+  .recognition-item {
+    background: linear-gradient(135deg, #fffbf0 0%, #fef3c7 100%);
+    border: 2px solid #fed7aa;
+    border-radius: 8px;
+    padding: 20px;
+
+    .recognition-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .rec-badge {
+        font-size: 32px;
+      }
+
+      .rec-score {
+        font-size: 12px;
+        color: #92400e;
+        font-weight: 600;
+        background: rgba(217, 119, 6, 0.1);
+        padding: 4px 12px;
+        border-radius: 6px;
+      }
+    }
+
+    .rec-message {
+      font-size: 15px;
+      color: #78350f;
+      line-height: 1.6;
+      margin: 0 0 12px 0;
+      font-weight: 500;
+    }
+
+    .rec-date {
+      font-size: 12px;
+      color: #92400e;
+      font-weight: 500;
+    }
+  }
+}
+
+/* ======================== BADGES LIST ======================== */
+
+.badges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .badge-item {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+    border: 2px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    .badge-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .badge-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .badge-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #065f46;
+        display: block;
+      }
+
+      .badge-desc {
+        font-size: 13px;
+        color: #10b981;
+        display: block;
+      }
+    }
+  }
+}
+
+/* ======================== EMPTY STATE ======================== */
+
+.empty-contributions {
+  background: white;
+  border: 2px dashed #e5e7eb;
+  border-radius: 12px;
+  padding: 64px 32px;
+  text-align: center;
+  margin-bottom: 32px;
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px 0;
+  }
+
+  p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+/* ======================== DIGEST ACTIONS ======================== */
+
+.digest-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 40px 32px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+
+  .action-btn {
+    padding: 12px 28px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #6b7280;
+
+    &:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    &.export-btn {
+      &:hover {
+        border-color: #10b981;
+        color: #10b981;
+        background: #f0fdf4;
+      }
+    }
+
+    &.share-btn {
+      &:hover {
+        border-color: #f59e0b;
+        color: #f59e0b;
+        background: #fffbf0;
+      }
+    }
+  }
+}
+
+/* ======================== RESPONSIVE DESIGN ======================== */
+
+@media (max-width: 1024px) {
+  .digest-container {
+    padding: 32px 24px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .learning-wins {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .digest-container {
+    padding: 24px 16px;
+  }
+
+  .page-header h1 {
+    font-size: 32px;
+  }
+
+  .week-navigation {
+    flex-direction: column;
+    gap: 16px;
+
+    .nav-btn {
+      width: 100%;
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    .metric-card {
+      padding: 16px;
+
+      .metric-icon {
+        font-size: 28px;
+        margin-bottom: 12px;
+      }
+
+      .metric-value {
+        font-size: 24px;
+      }
+    }
+  }
+
+  .summary-section .summary-card {
+    flex-direction: column;
+    padding: 20px;
+
+    .summary-icon {
+      font-size: 40px;
+    }
+  }
+
+  .contributions-section,
+  .collaborations-section,
+  .recognitions-section,
+  .badges-section {
+    padding: 20px;
+  }
+
+  .recognition-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .digest-actions {
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .digest-container {
+    padding: 16px 12px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .week-navigation {
+    .week-selector .selected-week {
+      .week-label {
+        font-size: 14px;
+      }
+
+      .week-range {
+        font-size: 12px;
+      }
+    }
+
+    .nav-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .metric-card {
+      padding: 12px;
+
+      .metric-value {
+        font-size: 20px;
+      }
+
+      .metric-label {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .learning-wins {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .learning-card {
+      padding: 12px;
+    }
+  }
+
+  .collaboration-list .collaboration-item {
+    padding: 12px;
+    gap: 12px;
+
+    .collaboration-badge {
+      font-size: 24px;
+    }
+
+    .collaboration-text {
+      font-size: 13px;
+    }
+  }
+
+  .recognition-cards .recognition-item {
+    padding: 12px;
+  }
+
+  .badges-list .badge-item {
+    padding: 12px;
+    gap: 12px;
+
+    .badge-icon {
+      font-size: 32px;
+    }
+  }
+}

@@ -1,0 +1,179 @@
+<div class="badges-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Achievement Badges</h1>
+      <p class="page-subtitle">Earn badges by accomplishing great things</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ getEarnedBadgeCount() }}</span>
+        <span class="stat-label">Earned</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ getTotalBadgeCount() }}</span>
+        <span class="stat-label">Available</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls Section -->
+  <div class="controls-section">
+    <div class="filter-group">
+      <label class="control-label">Category</label>
+      <div class="filter-buttons">
+        <button 
+          *ngFor="let cat of categories"
+          [class.active]="selectedCategory === cat.id"
+          (click)="onCategoryChange(cat.id)"
+          class="filter-btn">
+          {{ cat.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sort-group">
+      <label class="control-label">Sort By</label>
+      <select [(ngModel)]="selectedSort" (change)="onSortChange(selectedSort)" class="sort-select">
+        <option *ngFor="let sort of sortOptions" [value]="sort.id">{{ sort.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Status Messages -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading badges...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <p>{{ errorMessage }}</p>
+    <button (click)="loadBadges()" class="retry-btn">Retry</button>
+  </div>
+
+  <!-- Badges Grid -->
+  <div *ngIf="!isLoading && !errorMessage" class="badges-grid">
+    <div 
+      *ngFor="let badge of filteredBadges"
+      class="badge-card"
+      [class.earned]="badge.isEarned"
+      [class.nearly-earned]="!badge.isEarned && (badge.progressPercentage || 0) >= 90"
+      (click)="openDetail(badge)">
+      
+      <!-- Badge Icon -->
+      <div class="badge-icon-container">
+        <div class="badge-icon" [class.earned]="badge.isEarned">
+          {{ badge.icon || '⭐' }}
+        </div>
+        <div *ngIf="badge.isEarned" class="earned-indicator">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Badge Info -->
+      <div class="badge-info">
+        <h3 class="badge-name">{{ badge.name }}</h3>
+        <p class="badge-description">{{ badge.description }}</p>
+
+        <!-- Progress Bar (for unearned badges) -->
+        <div *ngIf="!badge.isEarned" class="progress-section">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill"
+              [class]="getProgressColor(badge.progressPercentage || 0)"
+              [style.width.%]="badge.progressPercentage || 0">
+            </div>
+          </div>
+          <div class="progress-stats">
+            <span class="progress-percent">{{ badge.progressPercentage || 0 }}%</span>
+            <span class="progress-text">{{ badge.criteriaStatus }}</span>
+          </div>
+        </div>
+
+        <!-- Earned Badge -->
+        <div *ngIf="badge.isEarned" class="earned-badge-label">
+          ✓ Earned Badge
+        </div>
+      </div>
+
+      <!-- View Details Link -->
+      <div class="badge-action">
+        <span class="view-link">View Details →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && filteredBadges.length === 0" class="empty-state">
+    <div class="empty-icon">🏅</div>
+    <h3>No badges found</h3>
+    <p>Adjust your filters or start working on your first achievement!</p>
+  </div>
+
+  <!-- Detail Modal -->
+  <div *ngIf="showDetailModal && selectedBadge" class="modal-overlay" (click)="closeDetail()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Close Button -->
+      <button class="modal-close" (click)="closeDetail()">✕</button>
+
+      <!-- Badge Display -->
+      <div class="modal-header">
+        <div class="modal-badge-icon">{{ selectedBadge.icon || '⭐' }}</div>
+        <h2>{{ selectedBadge.name }}</h2>
+        <p class="modal-category" *ngIf="selectedBadge.category">{{ selectedBadge.category }}</p>
+      </div>
+
+      <!-- Badge Details -->
+      <div class="modal-body">
+        <p class="modal-description">{{ selectedBadge.description }}</p>
+
+        <!-- Status Section -->
+        <div class="status-section">
+          <h4>Status</h4>
+          <div class="status-badge" [class.earned]="selectedBadge.isEarned">
+            <span *ngIf="selectedBadge.isEarned" class="earned-status">
+              ✓ Earned
+            </span>
+            <span *ngIf="!selectedBadge.isEarned" class="in-progress-status">
+              {{ selectedBadge.progressPercentage || 0 }}% Progress
+            </span>
+          </div>
+        </div>
+
+        <!-- Criteria Section -->
+        <div class="criteria-section">
+          <h4>Earning Criteria</h4>
+          <ul class="criteria-list">
+            <li *ngFor="let criteria of selectedBadge.criteria">{{ criteria }}</li>
+          </ul>
+        </div>
+
+        <!-- Progress Bar (if not earned) -->
+        <div *ngIf="!selectedBadge.isEarned" class="progress-section-modal">
+          <h4>Progress</h4>
+          <div class="progress-bar-large">
+            <div 
+              class="progress-fill"
+              [class]="getProgressColor(selectedBadge.progressPercentage || 0)"
+              [style.width.%]="selectedBadge.progressPercentage || 0">
+            </div>
+          </div>
+          <p class="progress-text-modal">{{ selectedBadge.criteriaStatus }}</p>
+        </div>
+
+        <!-- Earned Date (if earned) -->
+        <div *ngIf="selectedBadge.isEarned" class="earned-date-section">
+          <h4>Earned On</h4>
+          <p class="earned-date">{{ selectedBadge.earnedDate ? (selectedBadge.earnedDate | date: 'MMM dd, yyyy') : 'Recently' }}</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button (click)="closeDetail()" class="btn-close">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

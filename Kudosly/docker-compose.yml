@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: kudosly-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: kudosly
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./db/init-db.js:/docker-entrypoint-initdb.d/01-init-db.js:ro
+      - ./db/seed-data.js:/docker-entrypoint-initdb.d/02-seed-data.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kudosly-network
+
+  # Backend Spring Boot API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kudosly-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGODB_USERNAME:-admin}:${MONGODB_PASSWORD:-password}@mongodb:27017/kudosly?authSource=admin
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-production}
+      # Webhook configuration
+      JIRA_WEBHOOK_SECRET: ${JIRA_WEBHOOK_SECRET:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      SLACK_WEBHOOK_SECRET: ${SLACK_WEBHOOK_SECRET:-}
+      # AI Integration (if using OpenAI)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Async processing
+      SPRING_TASK_EXECUTION_POOL_CORE_SIZE: 5
+      SPRING_TASK_EXECUTION_POOL_MAX_SIZE: 10
+      SPRING_TASK_EXECUTION_POOL_QUEUE_CAPACITY: 100
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f http://localhost:8080/api/v1/webhooks/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kudosly-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Frontend Angular App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kudosly-frontend
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL:-http://localhost:8080/api/v1}
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "4200:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - kudosly-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  kudosly-network:
+    driver: bridge

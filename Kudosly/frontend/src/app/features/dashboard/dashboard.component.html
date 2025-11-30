@@ -1,0 +1,95 @@
+<div class="dashboard-container">
+  <!-- Welcome Header -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1 class="welcome-title">Welcome back, {{ userName }}! 👋</h1>
+      <p class="welcome-subtitle">{{ userTeam }} • Keep up the excellent work!</p>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalRecognitions }}</div>
+        <div class="stat-label">Recognitions</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalBadges }}</div>
+        <div class="stat-label">Badges Earned</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ impactScore }}</div>
+        <div class="stat-label">Impact Score</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ streakDays }}</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Recognitions Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>Recent Recognitions</h2>
+      <a href="/recognitions" class="view-all-link">View All →</a>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Loading recognitions...</p>
+    </div>
+
+    <div *ngIf="!isLoading && errorMessage" class="error-state">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && recentRecognitions.length > 0" class="recognition-list">
+      <div *ngFor="let recognition of recentRecognitions" class="recognition-item">
+        <div class="recognition-left">
+          <div class="recognition-badge">{{ recognition.badge }}</div>
+          <div class="recognition-content">
+            <p class="recognition-message">{{ recognition.message }}</p>
+            <small class="recognition-date">{{ recognition.timestamp | date: 'MMM dd, yyyy' }}</small>
+          </div>
+        </div>
+        <div class="recognition-right">
+          <div class="impact-badge">+{{ recognition.impactScore }} pts</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && recentRecognitions.length === 0" class="empty-state">
+      <p>No recognitions yet. Keep contributing to earn recognitions! 🚀</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <a href="/badges" class="action-button">
+      <span class="action-icon">🎯</span>
+      <span>View Badges</span>
+    </a>
+    <a href="/digest" class="action-button">
+      <span class="action-icon">📊</span>
+      <span>Weekly Digest</span>
+    </a>
+    <a href="/recognitions" class="action-button">
+      <span class="action-icon">⭐</span>
+      <span>All Recognitions</span>
+    </a>
+  </div>
+</div>

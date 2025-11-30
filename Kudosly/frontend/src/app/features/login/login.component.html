@@ -1,0 +1,87 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Kudosly</h1>
+      <p>Recognition & Achievement Platform</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Error Message -->
+      <div *ngIf="error" class="alert alert-error">
+        <span class="alert-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          [class.input-error]="submitted && f['email'].errors"
+          placeholder="you@example.com"
+        />
+        <span *ngIf="submitted && f['email'].errors" class="error-text">
+          <span *ngIf="f['email'].errors['required']">Email is required</span>
+          <span *ngIf="f['email'].errors['email']">Please enter a valid email</span>
+        </span>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-input"
+          [class.input-error]="submitted && f['password'].errors"
+          placeholder="••••••••"
+        />
+        <span *ngIf="submitted && f['password'].errors" class="error-text">
+          <span *ngIf="f['password'].errors['required']">Password is required</span>
+          <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</span>
+        </span>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading">Signing In...</span>
+      </button>
+    </form>
+
+    <!-- Demo Users Section -->
+    <div class="demo-section">
+      <p class="demo-label">Demo Accounts</p>
+      <div class="demo-buttons">
+        <button
+          type="button"
+          class="btn btn-demo"
+          (click)="demoLogin('alice@kudosly.com')"
+        >
+          Alice (Developer)
+        </button>
+        <button
+          type="button"
+          class="btn btn-demo"
+          (click)="demoLogin('bob@kudosly.com')"
+        >
+          Bob (Designer)
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>New to Kudosly? <a href="/register">Create an account</a></p>
+    </div>
+  </div>
+</div>
